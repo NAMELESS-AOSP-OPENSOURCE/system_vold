@@ -432,16 +432,16 @@ int RunIdleMaint(const android::sp<android::os::IVoldTaskListener>& listener) {
 
     stopGc(paths);
 
+    if (!gc_aborted) {
+        Trim(nullptr);
+        runDevGc();
+    }
+
     lk.lock();
     idle_maint_stat = IdleMaintStats::kStopped;
     lk.unlock();
 
     cv_stop.notify_one();
-
-    if (!gc_aborted) {
-        Trim(nullptr);
-        runDevGc();
-    }
 
     if (listener) {
         android::os::PersistableBundle extras;
